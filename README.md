@@ -1,0 +1,1 @@
+# Vacancy_Parser_database_version
