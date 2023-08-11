@@ -1,7 +1,7 @@
 from src import HeadHunterAPI, save_to_bd
 from BD_manager import DBManager
 
-
+#Основной цикл программы
 if __name__ == "__main__":
     print("""1. Показать список отслеживаемых компаний:
 2. Выгрузить актуальную информацию о вакансиях в БД

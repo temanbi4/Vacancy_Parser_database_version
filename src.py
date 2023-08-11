@@ -5,7 +5,7 @@ class HeadHunterAPI():
     '''Класс для работы с API hh.ru'''
 
     def get_vacancies(self):
-
+        """Список отслеживаемых компаний и подключение к API hh.ru"""
         selected_id_companies = {
             'Сбербанк-Сервис': 1473866,
             'МТС': 3776,
@@ -18,18 +18,29 @@ class HeadHunterAPI():
             'Авито': 84585,
             'Rambler': 8620
         }
-
         data = []
-
         for k, v in selected_id_companies.items():
             url = f'https://api.hh.ru/vacancies?employer_id={v}'
             response = requests.get(url).json()
             data.extend(response['items'])
         return data
 
+
 def save_to_bd():
+    # Запрос данных для подключения к БД
+    print('Укажите данные для подключения к БД:')
+    DB_ip_address = input("Введите IP-адрес сервера: (пример - '127.0.0.1')")
+    DB_server_name = input("Введите название сервера: (пример - 'vacancies')")
+    DB_username = input("Введите имя пользователя: (пример - 'postgres')")
+    DB_password = input("Введите пароль: ")
+
     # Подключение к базе данных
-    conn = psycopg2.connect(host='127.0.0.1', database='vacancies', user='postgres', password='369369')
+    try:
+        conn = psycopg2.connect(host=DB_ip_address, database=DB_server_name, user=DB_username, password=DB_password)
+        print("Подключение успешно установлено!")
+    except psycopg2.Error as e:
+        print("Ошибка подключения к базе данных:", e)
+        quit()
 
     # Открываем курсор для выполнения SQL-запросов
     cursor = conn.cursor()
@@ -38,9 +49,28 @@ def save_to_bd():
     hh_api = HeadHunterAPI()
     data = hh_api.get_vacancies()
 
-    # Очистка таблицы перед началом вставки новых данных
-    cursor.execute("DELETE FROM vacancies;")
-    conn.commit()
+    # Удаление предыдущей таблицы и создание новой перед началом вставки новых данных
+    create_table_sql = '''
+        CREATE TABLE IF NOT EXISTS vacancies (
+            id VARCHAR PRIMARY KEY,
+            name VARCHAR,
+            area_name VARCHAR,
+            salary_from INT,
+            salary_to INT,
+            published_at TIMESTAMP,
+            alternate_url VARCHAR,
+            employer_alternate_url VARCHAR,
+            snippet_requirement TEXT,
+            snippet_responsibility TEXT,
+            experience_name VARCHAR,
+            employment_name VARCHAR
+        );
+    '''
+    try:
+        cursor.execute("drop table vacancies;")
+        cursor.execute(create_table_sql)
+    finally:
+        conn.commit()
 
     # Перебираем каждый элемент данных и сохраняем его в базе данных
     for item in data:

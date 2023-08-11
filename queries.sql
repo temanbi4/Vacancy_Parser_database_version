@@ -1,3 +1,4 @@
+
 CREATE TABLE IF NOT EXISTS vacancies (
     id VARCHAR PRIMARY KEY,
     name VARCHAR,
