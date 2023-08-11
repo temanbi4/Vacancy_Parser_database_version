@@ -23,23 +23,19 @@ if __name__ == "__main__":
 4. Получить список всех вакансий, у которых зарплата выше средней по всем вакансиям.
 5. Получить список вакансий по ключевому слову.
 0. Выйти. """)
+            db_manager = DBManager()
             choice_two = input("Выберите действие: ")
             if choice_two == '1':
-                db_manager = DBManager()
                 print(db_manager.get_companies_and_vacancies_count())
             elif choice_two == '2':
-                db_manager = DBManager()
                 print(db_manager.get_all_vacancies())
             elif choice_two == '3':
-                db_manager = DBManager()
                 print(round(db_manager.get_avg_salary(), 1))
             elif choice_two == '4':
-                db_manager = DBManager()
                 count = round(db_manager.get_avg_salary(), 1)
                 print(db_manager.get_vacancies_with_higher_salary(count))
             elif choice_two == '5':
                 keyword = input("Введите ключевое слово для поиска: ")
-                db_manager = DBManager()
                 print(db_manager.get_vacancies_with_keyword(keyword))
             elif choice_two == '0':
                 quit()
